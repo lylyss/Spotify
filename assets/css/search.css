@@ -1,0 +1,50 @@
+.card-custom {
+  position: relative;
+  overflow: hidden;
+  height: 150px;
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  padding: 1rem;
+  border-radius: 0.75rem;
+  color: white;
+  font-weight: bold;
+}
+
+.card-custom img {
+  position: absolute;
+  bottom: 10px;
+  right: 10px;
+  width: 60px;
+  transform: rotate(15deg);
+}
+
+.search-bar {
+  max-width: 400px;
+  margin: 20px auto;
+}
+.card-custom {
+  transition: transform 0.2s ease;
+  cursor: pointer;
+}
+.card-custom:hover {
+  transform: scale(1.05);
+}
+
+#categoryGrid .card {
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+#categoryGrid .card:hover {
+  transform: scale(1.05);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+}
+
+#categoryGrid .card-title {
+  font-size: 1rem;
+  font-weight: bold;
+}
+
+body {
+  background: #181818;
+}
