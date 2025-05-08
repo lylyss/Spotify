@@ -21,16 +21,22 @@ async function searchDeezer(query) {
     const data = await response.json();
 
     const resultsContainer = document.getElementById("results-container");
-    resultsContainer.innerHTML = ""; /* elimnina risultati precedenti */
+    resultsContainer.innerHTML = "";
 
     data.data.forEach((track) => {
+      const formatDuration = (seconds) => {
+        const minutes = Math.floor(seconds / 60);
+        const remainingSeconds = seconds % 60;
+        return `${minutes}:${remainingSeconds.toString().padStart(2, "0")}`;
+      };
+
       const card = `
         <div class="col-md-3 mb-4">
-          <div class="card h-100">
-            <img src="${track.album.cover_medium}" class="card-img-top" alt="${track.title}">
-            <div class="card-body">
+          <div class="card h-100 border-0 justify-content-around text-white bg-dark">
+            <img src="${track.album.cover_medium}" class="img-fluid card-img-top p-3 bg-dark rounded" alt="${track.title}">
+            <div class="card-body bg-dark text-white">
               <h5 class="card-title">${track.title}</h5>
-              <p class="card-text">${track.artist.name}</p>
+              <p class="card-text">${track.artist.name} - ${formatDuration(track.duration)}</p>
             </div>
           </div>
         </div>
@@ -170,12 +176,11 @@ async function renderCategories() {
 
       /* Card Generi */
       const card = `
-        <div class="col-6 col-md-4 col-lg-3 mb-4">
-          <div class="card h-100 text-white border-0 category-card" 
-               style="background-color: ${cat.color}; background-image: url('${randomImg}'); background-size: cover; background-position: center; cursor: pointer;"
-               data-category="${cat.title}">
-            <div class="d-flex flex-column justify-content-between h-100 p-3" style="background-color: rgba(0, 0, 0, 0.5);">
-              <h5 class="card-title">${cat.title}</h5>
+        <div class="col-12 col-md-8 col-lg-3 mb-4"> 
+          <div class="card h-100 text-white border-0  md-pb5 category-card" style="background-color: ${cat.color};">
+            <div class="rotated-bg" style="background-image: url('${randomImg}');"></div>
+            <div class="d-flex flex-column justify-content-between h-100 p-3">
+              <h5 class="card-title pb-5 mb3">${cat.title}</h5>
             </div>
           </div>
         </div>
