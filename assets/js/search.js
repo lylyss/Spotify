@@ -42,11 +42,21 @@ async function searchDeezer(query) {
   }
 }
 
-/* avvia la ricerca al click sul bottone */
+/* ricerca al click button */
 document.getElementById("search-button").addEventListener("click", () => {
   const query = document.getElementById("search-input").value.trim();
   if (query) {
     searchDeezer(query);
+  }
+});
+
+/* risulato sparisce in caso la ricerca è vuota */
+document.getElementById("search-input").addEventListener("input", () => {
+  const query = document.getElementById("search-input").value.trim();
+  const resultsContainer = document.getElementById("results-container");
+
+  if (!query) {
+    resultsContainer.innerHTML = "";
   }
 });
 
@@ -151,21 +161,21 @@ async function renderCategories() {
       const response = await fetch(url, options);
       const data = await response.json();
 
-      /* un'immagine casuale */
+      /* Immagine casuale */
       let randomImg = cat.img;
       if (data.data && data.data.length > 0) {
         const randomTrack = data.data[Math.floor(Math.random() * data.data.length)];
         randomImg = randomTrack.album.cover_medium;
       }
 
+      /* Card Generi */
       const card = `
-        <div class="col-6 col-md-4 col-lg-3 mb-4 ">
-          <div class="card h-100 text-white border-0 category-card runded-0" 
-               style="background-color: ${cat.color}; min-height: 120px; cursor:pointer;"
+        <div class="col-6 col-md-4 col-lg-3 mb-4">
+          <div class="card h-100 text-white border-0 category-card" 
+               style="background-color: ${cat.color}; background-image: url('${randomImg}'); background-size: cover; background-position: center; cursor: pointer;"
                data-category="${cat.title}">
-            <div class="d-flex flex-column justify-content-between h-100 p-3">
+            <div class="d-flex flex-column justify-content-between h-100 p-3" style="background-color: rgba(0, 0, 0, 0.5);">
               <h5 class="card-title">${cat.title}</h5>
-              <img src="${randomImg}" class="img-fluid rounded-0" alt="${cat.title}">
             </div>
           </div>
         </div>
@@ -176,7 +186,6 @@ async function renderCategories() {
     }
   }
 
-  /* card cliccabili */
   document.querySelectorAll(".category-card").forEach((card) => {
     card.addEventListener("click", function () {
       const category = this.getAttribute("data-category");
