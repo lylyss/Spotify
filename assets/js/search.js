@@ -31,10 +31,10 @@ async function searchDeezer(query) {
       };
 
       const card = `
-        <div class="col-md-3 mb-4">
-          <div class="card h-100 border-0 justify-content-around text-white bg-dark">
+        <div class="col-md-6 mb-4">
+          <div class="card h-100 border-0 justify-content-around text-white bg-dark rounded">
             <img src="${track.album.cover_medium}" class="img-fluid card-img-top p-3 bg-dark rounded" alt="${track.title}">
-            <div class="card-body bg-dark text-white">
+            <div class="card-body bg-dark text-white ">
               <h5 class="card-title">${track.title}</h5>
               <p class="card-text">${track.artist.name} - ${formatDuration(track.duration)}</p>
             </div>
@@ -176,7 +176,7 @@ async function renderCategories() {
 
       /* Card Generi */
       const card = `
-        <div class="col-12 col-md-8 col-lg-3 mb-4"> 
+        <div class="col-6 col-md-6 col-lg-3 mb-4 "> 
           <div class="card h-100 text-white border-0  md-pb5 category-card" style="background-color: ${cat.color};">
             <div class="rotated-bg" style="background-image: url('${randomImg}');"></div>
             <div class="d-flex flex-column justify-content-between h-100 p-3">
