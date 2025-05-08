@@ -40,7 +40,7 @@
             </li>
             <!-- ricerca -->
             <li class="nav-item">
-              <a id="search-toggle" class="nav-link text-white px-0" href="#">
+              <a id="open-search" class="nav-link text-white px-0" href="#">
                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-search" viewBox="0 0 16 16">
                   <path
                     d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001q.044.06.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1 1 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0"
@@ -102,6 +102,7 @@
             <li class="nav-item"><a class="nav-link text-white px-0" href="#">that fucking mood</a></li>
           </ul>
         </div>
+        <!---------- colona centrale-------------------------------------------->
         <div id="middle-column" class="container col-7 text-light pt-4">
           <div class="position-relative d-inline-block mb-2">
             <!-- Freccia indietro -->
@@ -207,13 +208,16 @@
             </div>
           </div>
         </div>
-        <!-- Colonna di ricerca e generi musicali a somparsa -->
-        <div id="search-panel" class="container col-12 col-md-7 text-light pt-4 d-none">
-          <h4 class="mb-4">Browse all</h4>
-          <input type="text" id="searchInput" class="form-control mb-3" placeholder="Cerca brani, album o artisti..." />
-          <div id="categoryGrid" class="row"></div>
+        <!-- Sezione ricerca -->
+        <div id="search-results" class="col-8 p-4 d-none">
+          <div class="input-group mb-4">
+            <input type="text" id="search-input" class="form-control" placeholder="Cerca artista o brano..." />
+            <button class="btn btn-primary" id="search-button">Cerca</button>
+          </div>
+          <div class="row" id="results-container"></div>
         </div>
 
+        <!-- colonna destra -->
         <div class="col-2 text-light pt-4">
           <div class="d-flex justify-content-between aligh-items-center">
             <h6 class="d-inline-block"><strong>Attività amici</strong></h6>
@@ -293,24 +297,10 @@
     </div>
 
     <script src="./assets/js/search.js"></script>
-    <script src="./assets/js/generi.js"></script>
     <script
       src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.5/dist/js/bootstrap.bundle.min.js"
       integrity="sha384-k6d4wzSIapyDyv1kpU366/PK5hCdSbCRGRCMv+eplOQJWyd1fbcAu9OCUj5zNLiq"
       crossorigin="anonymous"
     ></script>
-    <script>
-      const searchToggle = document.getElementById("search-toggle");
-      const middleColumn = document.getElementById("middle-column");
-      const searchPanel = document.getElementById("search-panel");
-
-      searchToggle.addEventListener("click", (e) => {
-        e.preventDefault();
-
-        // Nasconde la colonna centrale, mostra la ricerca
-        middleColumn.classList.add("d-none");
-        searchPanel.classList.remove("d-none");
-      });
-    </script>
   </body>
 </html>

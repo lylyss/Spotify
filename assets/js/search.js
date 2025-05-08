@@ -1,226 +1,186 @@
-const genreUrl = "https://deezerdevs-deezer.p.rapidapi.com/genre";
-const searchUrl = "https://deezerdevs-deezer.p.rapidapi.com/search";
-
-const options = {
-  method: "GET",
-  headers: {
-    "x-rapidapi-key": "cb4cea1f5fmsh43d97be6eba90afp1bdc95jsnd23643164856",
-    "x-rapidapi-host": "deezerdevs-deezer.p.rapidapi.com",
-  },
-};
-
-const genreColors = {
-  Pop: "#1DB954",
-  Rock: "#FF5722",
-  Jazz: "#3F51B5",
-  // Aggiungi altri generi e colori qui se vuoi
-};
-
-function getGenreColor(genreName) {
-  return genreColors[genreName] || "#333";
-}
-
-let categories = [];
-let searchResults = [];
-
-function randomColor() {
-  const colors = ["#1DB954", "#FF5722", "#3F51B5", "#E91E63", "#009688", "#9C27B0", "#FFC107"];
-  return colors[Math.floor(Math.random() * colors.length)];
-}
-
-function renderCategoriesOrResults(filter = "") {
-  const grid = document.getElementById("categoryGrid");
-  const dataToRender = filter ? searchResults : categories;
-
-  const filtered = dataToRender.filter((item) => item.title?.toLowerCase().includes(filter.toLowerCase()));
-
-  renderResults(filtered, grid);
-}
-
-async function fetchCategories() {
-  const grid = document.getElementById("categoryGrid");
-  showLoading(grid);
-
-  try {
-    const res = await fetch(genreUrl, options);
-    if (!res.ok) {
-      console.error("Errore nella risposta API:", res.status, res.statusText);
-      return;
-    }
-    const data = await res.json();
-
-    categories = data.data.map((genre) => ({
-      title: genre.name,
-      color: getGenreColor(genre.name),
-      img: genre.picture,
-    }));
-
-    renderResults(categories, grid);
-  } catch (err) {
-    console.error("Errore durante la chiamata API Deezer:", err);
-    grid.innerHTML = `<p class="text-danger">Impossibile caricare i generi musicali. Riprova più tardi.</p>`;
-  }
-}
-
-async function fetchSearchResults(query) {
-  try {
-    const res = await fetch(`${searchUrl}?q=${encodeURIComponent(query)}&timestamp=${Date.now()}`, options);
-    if (!res.ok) {
-      console.error("Errore nella risposta API:", res.status, res.statusText);
-      return;
-    }
-    const data = await res.json();
-
-    console.log("Dati ricevuti per la ricerca:", data);
-
-    searchResults = data.data.map((item) => ({
-      title: item.title || item.name,
-      img: item.album?.cover || item.picture || "https://via.placeholder.com/150",
-    }));
-
-    renderSearchResults(query);
-  } catch (err) {
-    console.error("Errore durante la ricerca:", err);
-    const grid = document.getElementById("categoryGrid");
-    grid.innerHTML = `<p class="text-danger">Impossibile completare la ricerca. Riprova più tardi.</p>`;
-  }
-}
-
-function renderSearchResults(filter = "") {
-  const grid = document.getElementById("categoryGrid");
-  grid.innerHTML = "";
-
-  const filtered = searchResults.filter((item) => (item.title || "").toLowerCase().includes(filter.toLowerCase()));
-
-  if (filtered.length === 0) {
-    grid.innerHTML = `<p class="text-primary">Nessun risultato trovato.</p>`;
-    return;
-  }
-
-  filtered.forEach((item) => {
-    const col = document.createElement("div");
-    col.className = "col-6 col-md-4 col-lg-3 mb-4";
-    col.innerHTML = `
-      <div class="card h-100 text-white border-0" style="background-color: #333;">
-        <img src="${item.img}" class="card-img-top rounded" alt="${item.title}">
-        <div class="card-body d-flex align-items-center justify-content-center">
-          <h5 class="card-title text-center">${item.title}</h5>
-        </div>
-      </div>
-    `;
-    grid.appendChild(col);
-  });
-}
-
-document.addEventListener("DOMContentLoaded", () => {
-  const genreToggle = document.getElementById("genre-toggle");
-  const searchPanel = document.getElementById("search-panel");
-  const middleColumn = document.getElementById("middle-column");
-  const searchInput = document.getElementById("searchInput");
-
-  if (!genreToggle || !searchPanel || !middleColumn) {
-    console.error("Elemento mancante nel DOM.");
-    return;
-  }
-
-  genreToggle.addEventListener("click", () => {
-    middleColumn.classList.add("d-none");
-    searchPanel.classList.remove("d-none");
-    searchInput.value = "";
-    fetchCategories();
-  });
-
-  if (searchInput) {
-    searchInput.addEventListener("input", () => {
-      const query = searchInput.value.trim();
-      if (query) {
-        fetchSearchResults(query);
-      } else {
-        renderCategoriesOrResults();
-      }
-    });
-  }
-
-  fetchCategories();
+/*  sezione di ricerca e nasconde il contenuto centrale */
+document.getElementById("open-search").addEventListener("click", () => {
+  document.getElementById("middle-column").classList.add("d-none");
+  document.getElementById("search-results").classList.remove("d-none");
+  renderCategories();
 });
 
-function showLoading(grid) {
-  grid.innerHTML = `<div class="text-center"><div class="spinner-border text-light" role="status"></div></div>`;
-}
+/* Ricerca */
+async function searchDeezer(query) {
+  const url = `https://deezerdevs-deezer.p.rapidapi.com/search?q=${query}`;
+  const options = {
+    method: "GET",
+    headers: {
+      "x-rapidapi-key": "cb4cea1f5fmsh43d97be6eba90afp1bdc95jsnd23643164856",
+      "x-rapidapi-host": "deezerdevs-deezer.p.rapidapi.com",
+    },
+  };
 
-function renderResults(data, grid) {
-  console.log("Sto renderizzando questi dati:", data);
-  grid.innerHTML = "";
-
-  if (data.length === 0) {
-    grid.innerHTML = `<p class="text-success">Nessun risultato trovato.</p>`;
-    return;
-  }
-
-  /* ----- */
-}
-
-async function fetchSearchResults(query) {
   try {
-    const res = await fetch(`${searchUrl}?q=${encodeURIComponent(query)}&timestamp=${Date.now()}`, options);
-    if (!res.ok) {
-      console.error("Errore nella risposta API:", res.status, res.statusText);
-      return;
-    }
-    const data = await res.json();
+    const response = await fetch(url, options);
+    const data = await response.json();
 
-    console.log("Dati ricevuti per la ricerca:", data);
+    const resultsContainer = document.getElementById("results-container");
+    resultsContainer.innerHTML = ""; /* elimnina risultati precedenti */
 
-    searchResults = data.data.map((item) => ({
-      title: item.title,
-      artist: item.artist?.name,
-      album: item.album?.title,
-      img: item.album?.cover || item.picture || "https://via.placeholder.com/150",
-      duration: item.duration,
-      link: item.link,
-    }));
-
-    renderSearchResults(query);
-  } catch (err) {
-    console.error("Errore durante la ricerca:", err);
-    const grid = document.getElementById("categoryGrid");
-    grid.innerHTML = `<p class="text-danger">Impossibile completare la ricerca. Riprova più tardi.</p>`;
+    data.data.forEach((track) => {
+      const card = `
+        <div class="col-md-3 mb-4">
+          <div class="card h-100">
+            <img src="${track.album.cover_medium}" class="card-img-top" alt="${track.title}">
+            <div class="card-body">
+              <h5 class="card-title">${track.title}</h5>
+              <p class="card-text">${track.artist.name}</p>
+            </div>
+          </div>
+        </div>
+      `;
+      resultsContainer.innerHTML += card;
+    });
+  } catch (error) {
+    console.error(error);
   }
 }
 
-function renderSearchResults(filter = "") {
-  const grid = document.getElementById("categoryGrid");
-  grid.innerHTML = "";
+/* avvia la ricerca al click sul bottone */
+document.getElementById("search-button").addEventListener("click", () => {
+  const query = document.getElementById("search-input").value.trim();
+  if (query) {
+    searchDeezer(query);
+  }
+});
 
-  const filtered = searchResults.filter((item) => (item.title || "").toLowerCase().includes(filter.toLowerCase()));
+const categories = [
+  {
+    title: "Music",
+    color: "#e1337c",
+    img: "URL_IMMAGINE_MUSIC",
+  },
+  {
+    title: "Podcasts",
+    color: "#1db954",
+    img: "URL_IMMAGINE_PODCASTS",
+  },
+  {
+    title: "Live Events",
+    color: "#a259e6",
+    img: "URL_IMMAGINE_LIVE",
+  },
+  {
+    title: "Made for you",
+    color: "#1e3264",
+    img: "URL_IMMAGINE_LIVE",
+  },
+  {
+    title: "New Releases",
+    color: "#608108",
+    img: "URL_IMMAGINE_LIVE",
+  },
+  {
+    title: "Sanremo Festival",
+    color: "#477d95",
+    img: "URL_IMMAGINE_LIVE",
+  },
+  {
+    title: "Latin",
+    color: "#0d72ea",
+    img: "URL_IMMAGINE_LIVE",
+  },
+  {
+    title: "Pop",
+    color: "#477d95",
+    img: "URL_IMMAGINE_LIVE",
+  },
+  {
+    title: "Hip Hop",
+    color: "#477d94",
+    img: "URL_IMMAGINE_LIVE",
+  },
+  {
+    title: "Podcast Charts",
+    color: "#0d73ec",
+    img: "URL_IMMAGINE_LIVE",
+  },
+  {
+    title: "Podcast New ",
+    color: "#8e66ac",
+    img: "URL_IMMAGINE_LIVE",
+  },
+  {
+    title: "Video Podcasts",
+    color: "#608108",
+    img: "URL_IMMAGINE_LIVE",
+  },
+  {
+    title: "Charts",
+    color: "#8d67ab",
+    img: "URL_IMMAGINE_LIVE",
+  },
+  {
+    title: "Dance/Electronic",
+    color: "#0d73ec",
+    img: "URL_IMMAGINE_LIVE",
+  },
+  {
+    title: "Rock",
+    color: "#006450",
+    img: "URL_IMMAGINE_LIVE",
+  },
+  {
+    title: "Indie",
+    color: "#e91429",
+    img: "URL_IMMAGINE_LIVE",
+  },
+];
 
-  if (filtered.length === 0) {
-    grid.innerHTML = `<p class="text-warning">Nessun risultato trovato.</p>`;
-    return;
+async function renderCategories() {
+  const resultsContainer = document.getElementById("results-container");
+  resultsContainer.innerHTML = "";
+
+  for (const cat of categories) {
+    try {
+      const url = `https://deezerdevs-deezer.p.rapidapi.com/search?q=${encodeURIComponent(cat.title)}`;
+      const options = {
+        method: "GET",
+        headers: {
+          "x-rapidapi-key": "cb4cea1f5fmsh43d97be6eba90afp1bdc95jsnd23643164856",
+          "x-rapidapi-host": "deezerdevs-deezer.p.rapidapi.com",
+        },
+      };
+
+      const response = await fetch(url, options);
+      const data = await response.json();
+
+      /* un'immagine casuale */
+      let randomImg = cat.img;
+      if (data.data && data.data.length > 0) {
+        const randomTrack = data.data[Math.floor(Math.random() * data.data.length)];
+        randomImg = randomTrack.album.cover_medium;
+      }
+
+      const card = `
+        <div class="col-6 col-md-4 col-lg-3 mb-4 ">
+          <div class="card h-100 text-white border-0 category-card runded-0" 
+               style="background-color: ${cat.color}; min-height: 120px; cursor:pointer;"
+               data-category="${cat.title}">
+            <div class="d-flex flex-column justify-content-between h-100 p-3">
+              <h5 class="card-title">${cat.title}</h5>
+              <img src="${randomImg}" class="img-fluid rounded-0" alt="${cat.title}">
+            </div>
+          </div>
+        </div>
+      `;
+      resultsContainer.innerHTML += card;
+    } catch (error) {
+      console.error(`Errore nel caricamento della categoria ${cat.title}:`, error);
+    }
   }
 
-  const listGroup = document.createElement("ul");
-  listGroup.className = "list-group w-100";
-
-  filtered.forEach((item) => {
-    const durationMin = Math.floor(item.duration / 60);
-    const durationSec = item.duration % 60;
-
-    const li = document.createElement("li");
-    li.className = "list-group-item d-flex align-items-center gap-3";
-
-    li.innerHTML = `
-      <img src="${item.img}" alt="${item.title}" class="rounded" style="width: 80px; height: 80px; object-fit: cover;">
-      <div class="flex-grow-1">
-        <h5 class="mb-1">${item.title}</h5>
-        <p class="mb-0 text-muted"> ${item.artist} | ${item.album}</p>
-        <p class="mb-0 text-muted"> ${durationMin}:${durationSec.toString().padStart(2, "0")}</p>
-        <a href="${item.link}" target="_blank" class="btn btn-sm btn-outline-primary mt-1">Ascolta su Deezer</a>
-      </div>
-    `;
-
-    listGroup.appendChild(li);
+  /* card cliccabili */
+  document.querySelectorAll(".category-card").forEach((card) => {
+    card.addEventListener("click", function () {
+      const category = this.getAttribute("data-category");
+      searchDeezer(category);
+    });
   });
-
-  grid.appendChild(listGroup);
 }
